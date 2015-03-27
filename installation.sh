@@ -32,8 +32,10 @@ export logDir="/var/log/installation_script" # Log directory
 export logFile="$logDir/installation_script.log" # Log file
 export architecture=$(uname -m) # Computer's architecture
 export tempDir=$(mktemp -d /tmp/tempdir.XXXXXXXX) # Create temp directory
-declare -a apps=(wget vim git curl zsh tmux g++ gcc) # Programms from the official repo to be install
 export alreadyInstalledCode=999
+
+declare -a tools=(wget vim git curl zsh tmux g++ gcc) # Programms from the official repo to be install
+declare -a security=(nmap iptables wireshark)
 
 # Check for root privilages
 function check_root_privilages(){
@@ -61,8 +63,6 @@ function find_package_manager_tool(){
     packageManagerTool="zypper"
   elif [ -x "$(which pacman)" ]; then
     packageManagerTool="pacman"
-  elif [ -x "$(which yaourt)" ]; then
-    packageManagerTool="yaourt"
   else
       echo "Your package manager isn't supported"
       exit 3
@@ -76,13 +76,13 @@ function install_repo_apps(){
   for i in "${arrayName[@]}"; do
     if ! appLocation="$(type -p "$i")" || [ -z "$appLocation" ]; then # Check if the application isn't installed
       case $packageManagerTool in
-	pacman)
-		$packageManagerTool -S $i
-	;;
-	*)
-		$packageManagerTool install -y $i
-	;;
-	esac	      	
+    	pacman)
+    		$packageManagerTool -S $i
+    	;;
+    	*)
+    		$packageManagerTool install -y $i
+    	;;
+    	esac
 	exitLog=$?
       write_log $i $exitLog
     else
@@ -221,7 +221,8 @@ if [[ $distro == "Ubuntu" ]];then
   apt-get install -y wget
   wget -q -O - https://raw.githubusercontent.com/GNULinuxACMTeam/installing_software_on_linux/master/installation_alexdor.sh | bash
 else
-  install_repo_apps apps
+  install_repo_apps tools
+  install_repo_apps security
   install_sublime_text_3
   case $packageManagerTool in
     apt-get)
@@ -234,12 +235,9 @@ else
       wget -q https://atom.io/download/rpm
       rpm -i atom*
       ;;
-    pacman || yaourt)
+    pacman)
       #TO DO
       ;;
-    *)
-      echo "This script doesn't support your package manager"
-        ;;
   esac
   configure_tmux
   configure_zsh
