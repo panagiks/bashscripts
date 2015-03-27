@@ -30,7 +30,7 @@ export distro=$(lsb_release -si) # Linux distribution
 export displayLog=false
 export logDir="/var/log/installation_script" # Log directory
 export logFile="$logDir/installation_script.log" # Log file
-export architecture=$(uname -m)
+export architecture=$(uname -m) # Computer's architecture
 export tempDir=$(mktemp -d /tmp/tempdir.XXXXXXXX) # Create temp directory
 declare -a apps=(wget vim git curl zsh tmux g++ gcc) # Programms from the official repo to be install
 export alreadyInstalledCode=999
@@ -75,8 +75,15 @@ function install_repo_apps(){
   arrayName=("${!name}")
   for i in "${arrayName[@]}"; do
     if ! appLocation="$(type -p "$i")" || [ -z "$appLocation" ]; then # Check if the application isn't installed
-      $packageManagerTool install -y $i
-      exitLog=$?
+      case $packageManagerTool in
+	pacman)
+		$packageManagerTool -S $i
+	;;
+	*)
+		$packageManagerTool install -y $i
+	;;
+	esac	      	
+	exitLog=$?
       write_log $i $exitLog
     else
       write_log $i $alreadyInstalledCode
