@@ -219,7 +219,7 @@ find_package_manager_tool
 cd $tempDir
 
 if [[ $distro == "Ubuntu" ]];then
-  if ! appLocation="$(type -p "$i")" || [ -z "$appLocation" ]; then
+  if ! appLocation="$(type -p "wget")" || [ -z "$appLocation" ]; then
     apt-get install -y wget
     exitLog=$?
     write_log wget $exitLog
