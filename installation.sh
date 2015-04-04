@@ -224,7 +224,7 @@ if [[ $distro == "Ubuntu" ]];then
     exitLog=$?
     write_log wget $exitLog
   else
-      write_log $i $alreadyInstalledCode
+      write_log wget $alreadyInstalledCode
 
   fi
   wget -q -O - https://raw.githubusercontent.com/GNULinuxACMTeam/installing_software_on_linux/master/installation_alexdor.sh | bash
@@ -235,13 +235,22 @@ else
   case $packageManagerTool in
     apt-get)
       #TO DO
-      wget -q https://atom.io/download/deb
-      dpkg -i atom*
+      if ! appLocation="$(type -p "atom")" || [ -z "$appLocation" ]; then
+        wget -q https://atom.io/download/deb
+        dpkg -i atom*
+        exitLog=$?
+      else
+          write_log atom $alreadyInstalledCode
+      fi
       ;;
     yum || zypper)
       #TO DO
-      wget -q https://atom.io/download/rpm
-      rpm -i atom*
+      if ! appLocation="$(type -p "wget")" || [ -z "$appLocation" ]; then
+        wget -q https://atom.io/download/rpm
+        rpm -i atom*
+      else
+          write_log atom $alreadyInstalledCode
+      fi
       ;;
     pacman)
       #TO DO
