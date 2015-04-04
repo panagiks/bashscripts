@@ -34,7 +34,8 @@ export architecture=$(uname -m) # Computer's architecture
 export tempDir=$(mktemp -d /tmp/tempdir.XXXXXXXX) # Create temp directory
 export alreadyInstalledCode=999
 
-declare -a tools=(wget vim git curl zsh tmux g++ gcc) # Programms from the official repo to be install
+# Programms to be installed from the official reposittories
+declare -a tools=(wget vim git curl zsh tmux g++ gcc)
 declare -a security=(nmap iptables wireshark)
 
 # Check for root privilages
@@ -218,7 +219,14 @@ find_package_manager_tool
 cd $tempDir
 
 if [[ $distro == "Ubuntu" ]];then
-  apt-get install -y wget
+  if ! appLocation="$(type -p "$i")" || [ -z "$appLocation" ]; then
+    apt-get install -y wget
+    exitLog=$?
+    write_log wget $exitLog
+  else
+      write_log $i $alreadyInstalledCode
+
+  fi
   wget -q -O - https://raw.githubusercontent.com/GNULinuxACMTeam/installing_software_on_linux/master/installation_alexdor.sh | bash
 else
   install_repo_apps tools
