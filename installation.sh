@@ -178,7 +178,7 @@ function install_sublime_text_3(){
           sed -E 's#<h2>Build ([0-9]+)</h2>#\1#g')
   sublimeName="Sublime_Text_3_$build"
 
-  if [$packageManagerTool == "apt-get"]; then
+  if [$packageManagerTool = apt-get]; then
     if [[ ! -z $(which subl) && $(subl -v | awk '{print $NF}') == $build ]] ; then
       write_log $sublimeName $alreadyInstalledCode
     else
@@ -218,7 +218,7 @@ create_log_directory
 
 cd $tempDir
 
-if [[ $distro == "Ubuntu" ]];then
+if [[ $distro = "Ubuntu" ]];then
   if ! appLocation="$(type -p "wget")" || [ -z "$appLocation" ]; then
     apt-get install -y wget
     exitLog=$?
