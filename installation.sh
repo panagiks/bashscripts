@@ -129,9 +129,6 @@ function configure_tmux(){
     if [[ -e ~/.tmux.conf ]] ; then
   	   mv ~/.tmux.conf ~/.tmux.conf.old$(date +%Y%m%d)
   	  fi
-    if [[ -e ~/.tmux ]] ; then
-  	   mv ~/.tmux ~/.tmux.old$(date +%Y%m%d)
-  	  fi
     if [[ ! -d ~/.tmux ]] ; then
 	     mkdir ~/.tmux
     else
@@ -150,7 +147,7 @@ function configure_tmux(){
 
 # Install and configure oh-my-zsh
 function configure_zsh(){
-  wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | bash
+  wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -q -O - | bash
 
   # Install zsh-syntax-highlighting
     if [[ ! -d ~/.oh-my-zsh/custom ]]; then
