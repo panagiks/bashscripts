@@ -237,8 +237,8 @@ else
       #TO DO
       # Install atom
       if ! appLocation="$(type -p "atom")" || [ -z "$appLocation" ]; then
-        wget -q https://atom.io/download/deb
-        dpkg -i atom*
+        wget -O atom.deb -q https://atom.io/download/deb
+        dpkg -i atom.deb
         exitLog=$?
       else
           write_log atom $alreadyInstalledCode
@@ -248,8 +248,8 @@ else
       #TO DO
       # Install atom
       if ! appLocation="$(type -p "wget")" || [ -z "$appLocation" ]; then
-        wget -q https://atom.io/download/rpm
-        rpm -i atom*
+        wget -O atom.rpm -q https://atom.io/download/rpm
+        rpm -i atom.rpm
       else
           write_log atom $alreadyInstalledCode
       fi
