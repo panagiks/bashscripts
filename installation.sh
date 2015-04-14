@@ -47,7 +47,7 @@ fi
 
 # Check the internet connection
 function check_conection(){
-  if ![ "$(ping -c 1 google.com)" ];then
+  if [ ! "$(ping -c 1 google.com)" ];then
     echo "Please check your internet connection and execute the script again"
     exit 2
   fi
@@ -214,6 +214,7 @@ function install_sublime_text_3(){
 check_conection
 check_root_privilages
 find_package_manager_tool
+create_log_directory
 
 cd $tempDir
 
