@@ -18,11 +18,10 @@
 #     Security: Iptables, Wireshark, Hydra, Nmap, Aircrack-ng, Medusa
 #     Compilers: Python, Oracle's jdk 8, Ruby, G++, GCC
 #     IDEs: IntelliJ IDEA, Android Studio, Eclipse, Pycharm
-#   Other distros: TO DO
-# Software for distros with "yum" : TO DO
-# Software for distros with "zypper" : TO DO
-# Software for distros with "pacman" : TO DO
-# Software for distros with "yaourt" : TO DO
+#   Other distros: Wget vim git curl zsh tmux g++ gcc nmap iptables wireshark Sublime-Text 3 Atom TO DO
+# Software for distros with "yum" : Wget vim git curl zsh tmux g++ gcc nmap iptables wireshark Sublime-Text 3 Atom TO DO
+# Software for distros with "zypper" : Wget vim git curl zsh tmux g++ gcc nmap iptables wireshark Sublime-Text 3 Atom TO DO
+# Software for distros with "pacman" : Wget vim git curl zsh tmux g++ gcc nmap iptables wireshark TO DO
 #
 #-------------------------------------------------------------------------------------------------------
 
@@ -235,6 +234,7 @@ else
   case $packageManagerTool in
     apt-get)
       #TO DO
+      # Install atom
       if ! appLocation="$(type -p "atom")" || [ -z "$appLocation" ]; then
         wget -q https://atom.io/download/deb
         dpkg -i atom*
@@ -243,8 +243,9 @@ else
           write_log atom $alreadyInstalledCode
       fi
       ;;
-    yum || zypper)
+    yum | zypper)
       #TO DO
+      # Install atom
       if ! appLocation="$(type -p "wget")" || [ -z "$appLocation" ]; then
         wget -q https://atom.io/download/rpm
         rpm -i atom*
