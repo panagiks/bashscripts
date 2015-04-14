@@ -187,11 +187,11 @@ function install_sublime_text_3(){
       else
         url=$aptGetUrl$build"_i386.deb"
       fi
+      wget -q $url
+      dpkg -i sublime-text_build*
+      exitLog=$?
+      write_log $sublimeName $exitLog
     fi
-    wget -q $url
-    dpkg -i sublime-text_build*
-    exitLog=$?
-    write_log $sublimeName $exitLog
   else
     if [[ ! -z $(which subl) && $(subl -v | awk '{print $NF}') == $build ]] ; then
       write_log $sublimeName $alreadyInstalledCode
