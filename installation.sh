@@ -32,6 +32,7 @@ export logFile="$logDir/installation_script.log" # Log file
 export architecture=$(uname -m) # Computer's architecture
 export tempDir=$(mktemp -d /tmp/tempdir.XXXXXXXX) # Create temp directory
 export alreadyInstalledCode=999
+userRunningTheScript=$SUDO_USER
 
 # Programms to be installed from the official reposittories
 declare -a tools=(wget vim git curl zsh tmux g++ gcc)
@@ -126,23 +127,23 @@ function write_log(){
 # Configure tmux
 function configure_tmux(){
   # Check for existing files or directories and create needed ones
-    if [[ -e ~/.tmux.conf ]] ; then
-  	   mv ~/.tmux.conf ~/.tmux.conf.old$(date +%Y%m%d)
+    if [[ -e /home/$userRunningTheScript/.tmux.conf ]] ; then
+  	   mv /home/$userRunningTheScript/.tmux.conf /home/$userRunningTheScript/.tmux.conf.old$(date +%Y%m%d)
   	  fi
-    if [[ ! -d ~/.tmux ]] ; then
-	     mkdir ~/.tmux
+    if [[ ! -d /home/$userRunningTheScript/.tmux ]] ; then
+	     mkdir /home/$userRunningTheScript/.tmux
     else
-      if [[ -e ~/.tmux/inx ]] ; then
-    	   mv ~/.tmux/inx ~/.tmux/inx.old$(date +%Y%m%d)
+      if [[ -e /home/$userRunningTheScript/.tmux/inx ]] ; then
+    	   mv /home/$userRunningTheScript/.tmux/inx /home/$userRunningTheScript/.tmux/inx.old$(date +%Y%m%d)
     	  fi
-      if [[ -e ~/.tmux/xless ]] ;
-	       then mv ~/.tmux/xless ~/.tmux/xless.old$(date +%Y%m%d)
+      if [[ -e /home/$userRunningTheScript/.tmux/xless ]] ;
+	       then mv /home/$userRunningTheScript/.tmux/xless /home/$userRunningTheScript/.tmux/xless.old$(date +%Y%m%d)
 	      fi
     fi
   # Download configuration files
-    wget -O ~/.tmux.conf -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux.conf
-    wget -O ~/.tmux/inx -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux/inx
-    wget -O ~/.tmux/xless -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux/xless
+    wget -O /home/$userRunningTheScript/.tmux.conf -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux.conf
+    wget -O /home/$userRunningTheScript/.tmux/inx -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux/inx
+    wget -O /home/$userRunningTheScript/.tmux/xless -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux/xless
 }
 
 # Install and configure oh-my-zsh
@@ -150,20 +151,20 @@ function configure_zsh(){
   wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -q -O - | bash
 
   # Install zsh-syntax-highlighting
-    if [[ ! -d ~/.oh-my-zsh/custom ]]; then
-	     mkdir ~/.oh-my-zsh/costum
+    if [[ ! -d /home/$userRunningTheScript/.oh-my-zsh/custom ]]; then
+	     mkdir /home/$userRunningTheScript/.oh-my-zsh/costum
 	    fi
-    cd ~/.oh-my-zsh/custom/plugins
+    cd /home/$userRunningTheScript/.oh-my-zsh/custom/plugins
     git clone git://github.com/zsh-users/zsh-syntax-highlighting.git
-    cd
+    cd $tempDir
 
   # Configure .zshrc
-    sed -i 's/#COMPLETION_WAITING_DOTS/COMPLETION_WAITING_DOTS/' ~/.zshrc
-    sed -i 's/robbyrussell/wedisagree/' ~/.zshrc
-    sed -i 's/plugins=(.*/plugins=(git command-not-found tmux zsh-syntax-highlighting)/g' ~/.zshrc
+    sed -i 's/#COMPLETION_WAITING_DOTS/COMPLETION_WAITING_DOTS/' /home/$userRunningTheScript/.zshrc
+    sed -i 's/robbyrussell/wedisagree/' /home/$userRunningTheScript/.zshrc
+    sed -i 's/plugins=(.*/plugins=(git command-not-found tmux zsh-syntax-highlighting)/g' /home/$userRunningTheScript/.zshrc
 
   # Set zsh as the default shell
-    chsh -s $(which zsh)
+    chsh -s $(which zsh) $userRunningTheScript
 }
 
 # Install the latest build of Sublime Text 3
