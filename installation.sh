@@ -55,7 +55,7 @@ function check_conection(){
 
 # Find the package manager
 function find_package_manager_tool(){
-  if [ -x $(which apt-get) ];  then
+  if [ -x "$(which apt-get)" ];  then
     packageManagerTool="apt-get"
   elif [ -x "$(which yum)" ]; then
     packageManagerTool="yum"
