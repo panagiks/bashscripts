@@ -259,9 +259,8 @@ if [[ $distro = "Ubuntu" ]];then
     write_log wget $exitLog
   else
       write_log wget $alreadyInstalledCode
-
   fi
-  wget -q -O - https://raw.githubusercontent.com/GNULinuxACMTeam/installing_software_on_linux/master/installation_alexdor.sh | bash
+  https://raw.githubusercontent.com/alexdor/linuxscripts/master/installation_ubuntu.sh | bash
 else
   install_repo_apps tools
   install_repo_apps security
