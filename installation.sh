@@ -10,7 +10,7 @@
 #
 # Software for distros with "apt-get":
 #   Software for Ubuntu :
-#     Tools: Wget, Curl, Git, Dropbox, Y PPA Manager, Ubuntu Make, Ubuntu restricted
+#     Tools: Wget, Curl, Git, Dropbox, Ubuntu Make, Ubuntu restricted, Unity tweak
 #     Text Editors: Vim,  Atom, Sublime
 #     Multimedia Vlc, Gimp, Spotify
 #     Browsers: Firefox for developers, Chromium, Chrome
@@ -18,10 +18,10 @@
 #     Security: Iptables, Wireshark, Hydra, Nmap, Aircrack-ng, Medusa
 #     Compilers: Python, Oracle's jdk 8, Ruby, G++, GCC
 #     IDEs: IntelliJ IDEA, Android Studio, Eclipse, Pycharm
-#   Other distros: Wget vim git curl zsh tmux g++ gcc nmap iptables wireshark Sublime-Text 3 Atom TO DO
-# Software for distros with "yum" : Wget vim git curl zsh tmux g++ gcc nmap iptables wireshark Sublime-Text 3 Atom TO DO
-# Software for distros with "zypper" : Wget vim git curl zsh tmux g++ gcc nmap iptables wireshark Sublime-Text 3 Atom TO DO
-# Software for distros with "pacman" : Wget vim git curl zsh tmux g++ gcc nmap iptables wireshark TO DO
+#   Other distros: Wget vim git curl zsh tmux g++ gcc nmap iptables python Sublime-Text 3 Atom TO DO
+# Software for distros with "yum" : Wget vim git curl zsh tmux g++ gcc nmap iptables python Sublime-Text 3 Atom TO DO
+# Software for distros with "zypper" : Wget vim git curl zsh tmux g++ gcc nmap iptables python Sublime-Text 3 Atom TO DO
+# Software for distros with "pacman" : Wget vim git curl zsh tmux g++ gcc nmap iptables python TO DO
 #
 #-------------------------------------------------------------------------------------------------------
 
@@ -34,16 +34,23 @@ export tempDir=$(mktemp -d /tmp/tempdir.XXXXXXXX) # Create temp directory
 export alreadyInstalledCode=999
 userRunningTheScript=$SUDO_USER
 
+# Set home path
+if [[ ! -z  $userRunningTheScript ]]; then
+	userHome="/home/$userRunningTheScript/"
+else
+	userHome="/root/"
+fi
+
 # Programms to be installed from the official reposittories
-declare -a tools=(wget vim git curl zsh tmux g++ gcc)
-declare -a security=(nmap iptables wireshark)
+declare -a tools=(wget vim git curl zsh tmux g++ gcc python)
+declare -a security=(nmap iptables)
 
 # Check for root privilages
 function check_root_privilages(){
    if [[ $EUID -ne 0 ]]; then
      echo "This script needs root privilages"
      exit 1
-fi
+   fi
 }
 
 # Check the internet connection
@@ -68,28 +75,6 @@ function find_package_manager_tool(){
       echo "Your package manager isn't supported"
       exit 3
   fi
-}
-
-# Install applications from reposittories
-function install_repo_apps(){
-  name=$1[@]
-  arrayName=("${!name}")
-  for i in "${arrayName[@]}"; do
-    if ! appLocation="$(type -p "$i")" || [ -z "$appLocation" ]; then # Check if the application isn't installed
-      case $packageManagerTool in
-    	pacman)
-    		$packageManagerTool -S $i
-    	;;
-    	*)
-    		$packageManagerTool install -y $i
-    	;;
-    	esac
-	exitLog=$?
-      write_log $i $exitLog
-    else
-      write_log $i $alreadyInstalledCode
-    fi
-  done
 }
 
 # Create log directory
@@ -124,26 +109,48 @@ function write_log(){
     fi
 }
 
+# Install applications from reposittories
+function install_repo_apps(){
+  name=$1[@]
+  arrayName=("${!name}")
+  for i in "${arrayName[@]}"; do
+    if ! appLocation="$(type -p "$i")" || [ -z "$appLocation" ]; then # Check if the application isn't installed
+      case $packageManagerTool in
+    	pacman)
+    		$packageManagerTool -S --noconfirm --needed $i
+    	;;
+    	*)
+    		$packageManagerTool install -y $i
+    	;;
+    	esac
+	  exitLog=$?
+    write_log $i $exitLog
+    else
+      write_log $i $alreadyInstalledCode
+    fi
+  done
+}
+
 # Configure tmux
 function configure_tmux(){
   # Check for existing files or directories and create needed ones
-    if [[ -e /home/$userRunningTheScript/.tmux.conf ]] ; then
-  	   mv /home/$userRunningTheScript/.tmux.conf /home/$userRunningTheScript/.tmux.conf.old$(date +%Y%m%d)
+    if [[ -e $userHome.tmux.conf ]] ; then
+  	   mv $userHome.tmux.conf $userHome.tmux.conf.old$(date +%Y%m%d)
   	  fi
-    if [[ ! -d /home/$userRunningTheScript/.tmux ]] ; then
-	     mkdir /home/$userRunningTheScript/.tmux
+    if [[ ! -d $userHome.tmux ]] ; then
+	     mkdir $userHome.tmux
     else
-      if [[ -e /home/$userRunningTheScript/.tmux/inx ]] ; then
-    	   mv /home/$userRunningTheScript/.tmux/inx /home/$userRunningTheScript/.tmux/inx.old$(date +%Y%m%d)
+      if [[ -e $userHome.tmux/inx ]] ; then
+    	   mv $userHome.tmux/inx $userHome.tmux/inx.old$(date +%Y%m%d)
     	  fi
-      if [[ -e /home/$userRunningTheScript/.tmux/xless ]] ;
-	       then mv /home/$userRunningTheScript/.tmux/xless /home/$userRunningTheScript/.tmux/xless.old$(date +%Y%m%d)
+      if [[ -e $userHome.tmux/xless ]] ;
+	       then mv $userHome.tmux/xless $userHome.tmux/xless.old$(date +%Y%m%d)
 	      fi
     fi
   # Download configuration files
-    wget -O /home/$userRunningTheScript/.tmux.conf -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux.conf
-    wget -O /home/$userRunningTheScript/.tmux/inx -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux/inx
-    wget -O /home/$userRunningTheScript/.tmux/xless -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux/xless
+    wget -O $userHome.tmux.conf -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux.conf
+    wget -O $userHome.tmux/inx -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux/inx
+    wget -O $userHome.tmux/xless -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux/xless
 }
 
 # Install and configure oh-my-zsh
@@ -151,17 +158,17 @@ function configure_zsh(){
   wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -q -O - | bash
 
   # Install zsh-syntax-highlighting
-    if [[ ! -d /home/$userRunningTheScript/.oh-my-zsh/custom ]]; then
-	     mkdir /home/$userRunningTheScript/.oh-my-zsh/costum
+    if [[ ! -d $userHome.oh-my-zsh/custom ]]; then
+	     mkdir $userHome.oh-my-zsh/costum
 	    fi
-    cd /home/$userRunningTheScript/.oh-my-zsh/custom/plugins
+    cd $userHome.oh-my-zsh/custom/plugins
     git clone git://github.com/zsh-users/zsh-syntax-highlighting.git
     cd $tempDir
 
   # Configure .zshrc
-    sed -i 's/#COMPLETION_WAITING_DOTS/COMPLETION_WAITING_DOTS/' /home/$userRunningTheScript/.zshrc
-    sed -i 's/robbyrussell/wedisagree/' /home/$userRunningTheScript/.zshrc
-    sed -i 's/plugins=(.*/plugins=(git command-not-found tmux zsh-syntax-highlighting)/g' /home/$userRunningTheScript/.zshrc
+    sed -i 's/#COMPLETION_WAITING_DOTS/COMPLETION_WAITING_DOTS/' $userHome.zshrc
+    sed -i 's/robbyrussell/wedisagree/' $userHome.zshrc
+    sed -i 's/plugins=(.*/plugins=(git command-not-found tmux zsh-syntax-highlighting)/g' $userHome.zshrc
 
   # Set zsh as the default shell
     chsh -s $(which zsh) $userRunningTheScript
@@ -208,28 +215,8 @@ function install_sublime_text_3(){
   fi
 }
 
-# Main part
-check_conection
-check_root_privilages
-find_package_manager_tool
-create_log_directory
-
-cd $tempDir
-
-if [[ $distro = "Ubuntu" ]];then
-  if ! appLocation="$(type -p "wget")" || [ -z "$appLocation" ]; then
-    apt-get install -y wget
-    exitLog=$?
-    write_log wget $exitLog
-  else
-      write_log wget $alreadyInstalledCode
-
-  fi
-  wget -q -O - https://raw.githubusercontent.com/GNULinuxACMTeam/installing_software_on_linux/master/installation_alexdor.sh | bash
-else
-  install_repo_apps tools
-  install_repo_apps security
-  install_sublime_text_3
+#Installing Atom-Editor
+function install_atom_editor(){
   case $packageManagerTool in
     apt-get)
       #TO DO
@@ -256,6 +243,30 @@ else
       #TO DO
       ;;
   esac
+}
+# Main part
+check_conection
+check_root_privilages
+find_package_manager_tool
+create_log_directory
+
+cd $tempDir
+
+if [[ $distro = "Ubuntu" ]];then
+  if ! appLocation="$(type -p "wget")" || [ -z "$appLocation" ]; then
+    apt-get install -y wget
+    exitLog=$?
+    write_log wget $exitLog
+  else
+      write_log wget $alreadyInstalledCode
+
+  fi
+  wget -q -O - https://raw.githubusercontent.com/GNULinuxACMTeam/installing_software_on_linux/master/installation_alexdor.sh | bash
+else
+  install_repo_apps tools
+  install_repo_apps security
+  install_sublime_text_3
+  install_atom_editor
   configure_tmux
   configure_zsh
 fi
