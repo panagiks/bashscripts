@@ -2,7 +2,7 @@
 
 #-------------------------------------------------------------------------------------------------------
 #
-# Filename : installation_alexdor.sh
+# Filename : installation_ubuntu.sh
 # Author: Alexandros Dorodoulis
 # Description: Script for installing the following programms on Ubuntu
 #   Tools: Wget, Curl, Tmux, Zsh, Git, Dropbox, Ubuntu Make, Ubuntu restricted, Unity tweak
@@ -31,6 +31,7 @@ if [[ ! -z  $userRunningTheScript ]]; then
 else
 	userHome="/root/"
 fi
+
 # Programms to be installed from reposittories
 declare -a tools=(wget curl git dropbox tmux zsh ubuntu-make ubuntu-restricted-extras unity-tweak-tool) #Tools
 declare -a textEditor=(vim atom) #Text Editors
@@ -46,7 +47,7 @@ function check_root_privilages(){
    echo "This script needs root privilages"
    exit 1
   fi
-  }
+}
 
 # Check the internet connection
 function check_conection(){
@@ -134,7 +135,7 @@ function install_sublime_text_3(){
   if [[ ! -z $(which subl) && $(subl -v | awk '{print $NF}') == $build ]] ; then
     		write_log $sublimeName $alreadyInstalledCode
   else
-	if [ $architecture == "x86_64" ]; then
+		if [ $architecture == "x86_64" ]; then
       url=$frontUrl$build"_amd64.deb"
       wget -q $url
       dpkg -i sublime-text_build*
@@ -147,8 +148,8 @@ function install_sublime_text_3(){
       dpkg -i sublime-text_build*
       exitLog=$?
       write_log $sublimeName $exitLog
-  fi
-fi
+  	fi
+	fi
 }
 
 # Configure tmux
@@ -170,6 +171,7 @@ function configure_tmux(){
 	       then mv $userHome.tmux/xless $userHome.tmux/xless.old$(date +%Y%m%d)
 	      fi
     fi
+
   # Download configuration files
     wget -O $userHome.tmux.conf -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux.conf
     wget -O $userHome.tmux/inx -q https://raw.githubusercontent.com/alexdor/tmux/master/.tmux/inx
@@ -181,10 +183,10 @@ function configure_zsh(){
   wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | bash
 
   # Install zsh-syntax-highlighting
-    if [[ ! -d ~/.oh-my-zsh/custom ]]; then
-	     mkdir ~/.oh-my-zsh/costum
+    if [[ ! -d $userHome/.oh-my-zsh/custom ]]; then
+	     mkdir $userHome/.oh-my-zsh/costum
 	    fi
-    cd ~/.oh-my-zsh/custom/plugins
+    cd $userHome/.oh-my-zsh/custom/plugins
     git clone git://github.com/zsh-users/zsh-syntax-highlighting.git
     cd
 
@@ -226,7 +228,7 @@ install_repo_apps security
 install_sublime_text_3
 
 # Install IDEs
-	echo "a" | umake android ~/tools/android-Studio; write_log android-studio $? # Auto accept android-studio license
+	echo "a" | umake android $userHome/tools/android-Studio; write_log android-studio $? # Auto accept android-studio license
 	umake ide idea $userHome/tools/idea; write_log idea $?
 	umake ide eclipse $userHome/tools/eclipse; write_log eclipse $?
 	umake ide pycharm $userHome/tools/pycharm; write_log pycharm $?
