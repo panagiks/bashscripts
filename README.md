@@ -1,3 +1,3 @@
-# Linux scripts
-A few of my Linux scripts 
+# Bash scripts
+A few of my bash scripts 
 
