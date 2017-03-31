@@ -33,13 +33,13 @@ else
 fi
 
 # Programms to be installed from reposittories
-declare -a tools=(wget curl git dropbox tmux zsh ubuntu-make ubuntu-restricted-extras unity-tweak-tool) #Tools
-declare -a textEditor=(vim atom) #Text Editors
-declare -a multimedia=(vlc gimp gimp-data gimp-data-extras gimp-plugin-registry spotify-client) #Multimedia
+declare -a tools=(wget curl git ubuntu-make ubuntu-restricted-extras unity-tweak-tool) #Tools
+declare -a textEditor=(vim nano atom) #Text Editors
+declare -a multimedia=(vlc) #Multimedia
 declare -a browsers=(firefox chromium-browser google-chrome-stable) #Browsers
 declare -a mailClient=(thunderbird) #Mail Client
 declare -a security=(iptables wireshark hydra nmap aircrack-ng medusa) #Security
-declare -a compilers=(ruby python3 g++ gcc oracle-java8-installer oracle-java8-set-default) #Compilers
+declare -a compilers=(ruby python3 python3-pip g++ gcc oracle-java8-installer oracle-java8-set-default) #Compilers
 
 # Check for root privilages
 function check_root_privilages(){
@@ -105,20 +105,26 @@ function install_repo_apps(){
   done
 }
 
+# Gnome Staging PPA, adds Gnome 3.20 to Ubuntu 16.04 LTS. Should run on "clean" installation.
+function gnome_staging(){
+	add-apt-repository ppa:gnome3-team/gnome3-staging
+	apt-get -y dist-upgrade
+}
+
 # Add repositories
 function add_repositories(){
 	add-apt-repository -y ppa:libreoffice/ppa #Libreoffice oficial repo
-	add-apt-repository -y  ppa:ubuntu-mozilla-daily/firefox-aurora  #Firefox for developers
-	add-apt-repository -y  ppa:otto-kesselgulasch/gimp  #Gimp latest stable version
+#	add-apt-repository -y  ppa:ubuntu-mozilla-daily/firefox-aurora  #Firefox for developers
+#	add-apt-repository -y  ppa:otto-kesselgulasch/gimp  #Gimp latest stable version
 	add-apt-repository -y  ppa:videolan/stable-daily  #Vlc latest stable version
-	apt-add-repository "deb http://repository.spotify.com stable non-free"  #Spotify
-	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 94558F59 #Spotify public key
+#	apt-add-repository "deb http://repository.spotify.com stable non-free"  #Spotify
+#	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 94558F59 #Spotify public key
 	add-apt-repository -y  ppa:webupd8team/java  #Oracle java
 	add-apt-repository -y  ppa:webupd8team/atom  #Atom text editor
 	wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - #Add key for Chrome
 	sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'  #Set repo for Chrome
-	apt-key adv --keyserver pgp.mit.edu --recv-keys 5044912E #Add key for Dropbox
-	add-apt-repository -y  "deb http://linux.dropbox.com/ubuntu $(lsb_release -sc) main"  #Add repo for Dropbox
+#	apt-key adv --keyserver pgp.mit.edu --recv-keys 5044912E #Add key for Dropbox
+#	add-apt-repository -y  "deb http://linux.dropbox.com/ubuntu $(lsb_release -sc) main"  #Add repo for Dropbox
 	add-apt-repository -y  ppa:ubuntu-desktop/ubuntu-make  #Ubuntu Make
 	apt-get update
 }
@@ -205,6 +211,8 @@ echo "Checking for root privilages"
 check_conection
 echo "Checking the internet connection"
 check_root_privilages
+echo "Upgrading Gnome to 3.20"
+gnome_staging
 echo "Adding necessary repositories"
 add_repositories
 echo "Creating log directory"
@@ -224,28 +232,28 @@ install_repo_apps multimedia
 install_repo_apps browsers
 install_repo_apps mailClient
 install_repo_apps compilers
-install_repo_apps security
-install_sublime_text_3
+#install_repo_apps security
+#install_sublime_text_3
 
 # Install IDEs
-	echo "a" | umake android $userHome/tools/android-Studio; write_log android-studio $? # Auto accept android-studio license
-	umake ide idea $userHome/tools/idea; write_log idea $?
-	umake ide eclipse $userHome/tools/eclipse; write_log eclipse $?
-	umake ide pycharm $userHome/tools/pycharm; write_log pycharm $?
+#	echo "a" | umake android $userHome/tools/android-Studio; write_log android-studio $? # Auto accept android-studio license
+#	umake ide idea $userHome/tools/idea; write_log idea $?
+#	umake ide eclipse $userHome/tools/eclipse; write_log eclipse $?
+#	umake ide pycharm $userHome/tools/pycharm; write_log pycharm $?
 
 # Make user able to run wireshark without root privilages, changes take efect after log out and log in
-		addgroup -system wireshark
-		chown root:wireshark /usr/bin/dumpcap
-		setcap cap_net_raw,cap_net_admin=eip /usr/bin/dumpcap
-		usermod -a -G wireshark $USER
+#		addgroup -system wireshark
+#		chown root:wireshark /usr/bin/dumpcap
+#		setcap cap_net_raw,cap_net_admin=eip /usr/bin/dumpcap
+#		usermod -a -G wireshark $USER
 
   sed -i 's/gedit.desktop/atom/g' /etc/gnome/defaults.list # Set Atom as default text editor
 
 # Configure Zsh
-configure_zsh
+#configure_zsh
 
 # Configure Tmux
-configure_tmux
+#configure_tmux
 
 #Cleaning up
   rm -rf $tempDir
