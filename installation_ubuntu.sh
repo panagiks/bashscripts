@@ -111,6 +111,24 @@ function gnome_staging(){
 	apt-get -y dist-upgrade
 }
 
+function gnome_themes(){
+	if [[ ! -d $userHome/.themes ]]; then
+	     mkdir $userHome/.themes
+	    fi
+	wget -O $userHome/.themes/Gnome-OSX-II-2-5-1.tar.xz -q https://dl.opendesktop.org/api/files/download/id/1489657686/Gnome-OSX-II-2-5-1.tar.xz
+	wget -O $userHome/.themes/Gnome-OSX-Dark-Shell.tar.gz -q https://dl.opendesktop.org/api/files/download/id/1488138514/Gnome-OSX-Dark-Shell.tar.gz
+	cd $userHome/.themes/
+	tar xf Gnome-OSX-II-2-5-1.tar.xz
+	tar xf Gnome-OSX-Dark-Shell.tar.gz
+	rm Gnome-OSX-II-2-5-1.tar.xz
+	rm Gnome-OSX-Dark-Shell.tar.gz
+	cd $userHome
+	if [[ ! -d $userHome/.icons ]]; then
+	     mkdir $userHome/.icons
+	    fi
+	git clone https://github.com/keeferrourke/la-capitaine-icon-theme.git
+}
+
 # Add repositories
 function add_repositories(){
 	add-apt-repository -y ppa:libreoffice/ppa #Libreoffice oficial repo
@@ -234,6 +252,9 @@ install_repo_apps mailClient
 install_repo_apps compilers
 #install_repo_apps security
 #install_sublime_text_3
+
+# Download Gnome themes
+gnome_themes
 
 # Install IDEs
 #	echo "a" | umake android $userHome/tools/android-Studio; write_log android-studio $? # Auto accept android-studio license
