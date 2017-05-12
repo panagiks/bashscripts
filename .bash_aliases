@@ -1,0 +1,6 @@
+alias x='exit'
+alias lsl='ls -l'
+alias lsa='ls -a'
+alias lsla='ls -la'
+alias rmr='rm -r'
+alias rmrf='rm -rf'
